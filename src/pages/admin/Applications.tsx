@@ -1,21 +1,71 @@
 import { useTeachers } from '../../TeacherContext';
-import { FileText, Eye, CheckCircle, Download, X, Calendar, Phone, MapPin, GraduationCap } from 'lucide-react';
+import { FileText, Eye, CheckCircle, Download, X, Calendar, Phone, MapPin, GraduationCap, FileSpreadsheet, Search, ChevronLeft, ChevronRight } from 'lucide-react';
 import React from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Application } from '../../types';
+import { exportToExcel } from '../../lib/excel';
 
 export const Applications = () => {
   const { applications, confirmApplication } = useTeachers();
   const [selectedApp, setSelectedApp] = React.useState<Application | null>(null);
+  const [searchTerm, setSearchTerm] = React.useState('');
+  const [currentPage, setCurrentPage] = React.useState(1);
+  const rowsPerPage = 100;
+
+  const handleExport = () => {
+    const data = applications.map(app => ({
+      'F.I.SH': app.fullName,
+      'Telefon': app.phone,
+      'Kurs': app.courseName,
+      'Sana': app.date,
+      'Holat': app.status === 'confirmed' ? 'Tasdiqlangan' : 'Kutilmoqda',
+      'Manzil': app.address,
+      'Maktab': app.school,
+      'Sinf': app.grade
+    }));
+    exportToExcel(data, 'Arizalar');
+  };
+
+  const filteredApps = applications.filter(app => 
+    app.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    app.phone.includes(searchTerm)
+  );
+
+  const totalPages = Math.ceil(filteredApps.length / rowsPerPage);
+  const currentApps = filteredApps.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage);
 
   return (
     <div className="space-y-8">
-      <div>
-        <h1 className="text-2xl font-bold text-slate-900">Arizalar</h1>
-        <p className="text-slate-500">Kelib tushgan barcha arizalar ro'yxati</p>
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-slate-900">Arizalar</h1>
+          <p className="text-slate-500">Kelib tushgan barcha arizalar ro'yxati</p>
+        </div>
+        <button 
+          onClick={handleExport}
+          className="bg-emerald-600 text-white px-4 py-2 rounded-xl font-semibold flex items-center gap-2 hover:bg-emerald-700 transition-all shadow-lg shadow-emerald-100"
+        >
+          <FileSpreadsheet className="w-5 h-5" /> Excelga yuklash
+        </button>
       </div>
 
       <div className="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden">
+        <div className="p-4 border-b border-slate-50 flex items-center gap-4">
+          <div className="relative flex-1 max-w-md">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+            <input 
+              type="text" 
+              placeholder="Ism yoki telefon bo'yicha qidirish..."
+              value={searchTerm}
+              onChange={(e) => {
+                setSearchTerm(e.target.value);
+                setCurrentPage(1);
+              }}
+              className="w-full pl-10 pr-4 py-2 rounded-lg border border-slate-200 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none text-sm"
+            />
+          </div>
+        </div>
+
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
@@ -26,11 +76,11 @@ export const Applications = () => {
                 <th className="px-6 py-4 text-xs font-bold text-slate-600 uppercase">Sana</th>
                 <th className="px-6 py-4 text-xs font-bold text-slate-600 uppercase">Holat</th>
                 <th className="px-6 py-4 text-xs font-bold text-slate-600 uppercase">Shartnoma</th>
-                <th className="px-6 py-4 text-xs font-bold text-slate-600 uppercase">Amallar</th>
+                <th className="px-6 py-4 text-xs font-bold text-slate-600 uppercase text-right">Amallar</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
-              {applications.map((app) => (
+              {currentApps.map((app) => (
                 <tr key={app.id} className="hover:bg-slate-50/50 transition-colors">
                   <td className="px-6 py-4">
                     <div className="font-bold text-slate-900">{app.fullName}</div>
@@ -64,8 +114,8 @@ export const Applications = () => {
                       <span className="text-slate-300 text-xs">-</span>
                     )}
                   </td>
-                  <td className="px-6 py-4">
-                    <div className="flex gap-2">
+                  <td className="px-6 py-4 text-right">
+                    <div className="flex gap-2 justify-end">
                       <button 
                         onClick={() => setSelectedApp(app)}
                         className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all"
@@ -84,16 +134,40 @@ export const Applications = () => {
                   </td>
                 </tr>
               ))}
-              {applications.length === 0 && (
+              {currentApps.length === 0 && (
                 <tr>
                   <td colSpan={7} className="px-6 py-12 text-center text-slate-400">
-                    Hozircha arizalar mavjud emas
+                    Arizalar topilmadi
                   </td>
                 </tr>
               )}
             </tbody>
           </table>
         </div>
+
+        {totalPages > 1 && (
+          <div className="p-4 border-t border-slate-50 flex items-center justify-between bg-slate-50/30">
+            <div className="text-sm text-slate-500">
+              Jami {filteredApps.length} tadan {(currentPage - 1) * rowsPerPage + 1}-{Math.min(currentPage * rowsPerPage, filteredApps.length)} ko'rsatilmoqda
+            </div>
+            <div className="flex gap-2">
+              <button 
+                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                disabled={currentPage === 1}
+                className="flex items-center gap-2 px-4 py-2 rounded-xl border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all font-bold text-sm"
+              >
+                <ChevronLeft className="w-4 h-4" /> Oldingi
+              </button>
+              <button 
+                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                disabled={currentPage === totalPages}
+                className="flex items-center gap-2 px-4 py-2 rounded-xl border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all font-bold text-sm"
+              >
+                Keyingi <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Detail Modal */}
@@ -104,10 +178,10 @@ export const Applications = () => {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="bg-white w-full max-w-2xl rounded-[2.5rem] shadow-2xl overflow-hidden"
+              className="bg-white w-full max-w-2xl rounded-2xl md:rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
             >
-              <div className="p-8 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
-                <h2 className="text-2xl font-bold text-slate-900">Ariza tafsilotlari</h2>
+              <div className="p-4 md:p-8 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+                <h2 className="text-xl font-bold text-slate-900">Ariza tafsilotlari</h2>
                 <button 
                   onClick={() => setSelectedApp(null)}
                   className="p-2 hover:bg-white rounded-xl transition-all text-slate-400 hover:text-slate-600"
@@ -116,7 +190,7 @@ export const Applications = () => {
                 </button>
               </div>
               
-              <div className="p-8 space-y-8">
+              <div className="p-4 md:p-8 space-y-8 overflow-y-auto">
                 <div className="grid md:grid-cols-2 gap-8">
                   <div className="space-y-6">
                     <div className="flex items-start gap-4">

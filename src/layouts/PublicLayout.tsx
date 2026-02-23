@@ -32,10 +32,10 @@ export const PublicLayout = () => {
                 <div className="bg-indigo-600 p-2 rounded-xl">
                   < GraduationCap className="w-6 h-6 text-white" />
                 </div>
-                <span className="text-2xl font-black tracking-tight text-white">FutureLab</span>
+                <span className="text-2xl font-black tracking-tight text-white hover:text-sky-200 transition-colors">Kelajak Labaratoriyasi</span>
               </Link>
               <p className="text-slate-400 leading-relaxed">
-                FutureLab – Kelajak laboratoriyasi. O'zbekistondagi eng zamonaviy o'quv markazlaridan biri. Biz bilan kelajagingizni bugundan quring.
+                Kelajak Labaratoriyasi – O'zbekistondagi eng zamonaviy o'quv markazlaridan biri. Biz bilan kelajagingizni bugundan quring.
               </p>
               <div className="flex items-center gap-4">
                 <a 
@@ -109,7 +109,7 @@ export const PublicLayout = () => {
 
           <div className="pt-8 border-t border-slate-800 flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-slate-500 text-sm text-center">
-              © {new Date().getFullYear()} FutureLab. Barcha huquqlar himoyalangan.
+              © {new Date().getFullYear()} <a href="https://kelajaklaboratoriyasi.uz" target="_blank" rel="noreferrer" className="hover:underline">Kelajak Labaratoriyasi</a>. Barcha huquqlar himoyalangan.
             </p>
             <div className="flex items-center gap-8 text-sm text-slate-500">
               <a href="#" className="hover:text-slate-300">Maxfiylik siyosati</a>

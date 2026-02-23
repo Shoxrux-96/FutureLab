@@ -14,3 +14,13 @@
     @apply font-sans bg-slate-50 text-slate-900;
   }
 }
+
+.blog-content h1 { @apply text-3xl font-bold mb-4; }
+.blog-content h2 { @apply text-2xl font-bold mb-3; }
+.blog-content p { @apply mb-4; }
+.blog-content ul { @apply list-disc pl-6 mb-4; }
+.blog-content ol { @apply list-decimal pl-6 mb-4; }
+.blog-content strong { @apply font-bold; }
+.blog-content em { @apply italic; }
+.blog-content u { @apply underline; }
+.blog-content blockquote { @apply border-l-4 border-slate-200 pl-4 italic mb-4; }

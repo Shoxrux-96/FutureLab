@@ -241,7 +241,7 @@ export const Apply = () => {
               <div className="space-y-4">
                 <h2 className="text-3xl md:text-4xl font-black leading-tight">Arizani tasdiqlash va Shartnoma</h2>
                 <p className="text-sky-100 text-lg leading-relaxed">
-                  FutureLab o'quv markazida o'qishni boshlash uchun so'nggi qadam! Botimiz orqali siz:
+                  Kelajak Labaratoriyasi o'quv markazida o'qishni boshlash uchun so'nggi qadam! Botimiz orqali siz:
                 </p>
                 
                 <ul className="grid gap-3">
@@ -295,23 +295,12 @@ export const Apply = () => {
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-          {[
-            { name: 'Matematika', icon: 'Σ' },
-            { name: 'Fizika', icon: '⚛' },
-            { name: 'Ona tili', icon: '✍' },
-            { name: 'Ingliz tili', icon: 'A' },
-            { name: 'Rus tili', icon: 'Я' },
-            { name: 'Kimyo', icon: 'H₂O' },
-            { name: 'Biologiya', icon: '🧬' },
-            { name: 'Tarix', icon: '📜' },
-            { name: 'Huquq', icon: '⚖' },
-            { name: 'IT Dasturlash', icon: '</>' },
-          ].map((subject, i) => (
-            <div key={i} className="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all text-center space-y-4 group">
+          {courses.map((course) => (
+            <div key={course.id} className="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all text-center space-y-4 group">
               <div className="w-16 h-16 mx-auto bg-indigo-50 rounded-2xl flex items-center justify-center text-2xl font-black text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-all">
-                {subject.icon}
+                <BookOpen className="w-8 h-8" />
               </div>
-              <h3 className="font-bold text-slate-900">{subject.name}</h3>
+              <h3 className="font-bold text-slate-900">{course.title}</h3>
             </div>
           ))}
         </div>

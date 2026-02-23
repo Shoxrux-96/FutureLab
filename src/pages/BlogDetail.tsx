@@ -6,18 +6,26 @@ import { motion } from 'motion/react';
 export const BlogDetail = () => {
   const { id } = useParams();
   const { blogPosts } = useTeachers();
-  const post = blogPosts.find(p => p.id === id);
+  const post = blogPosts.find(p => p.id === id && p.status === 'published');
 
   if (!post) {
     return (
       <div className="max-w-7xl mx-auto px-4 py-32 text-center space-y-6">
-        <h1 className="text-4xl font-bold text-slate-900">Maqola topilmadi</h1>
+        <h1 className="text-4xl font-bold text-slate-900">Maqola topilmadi yoki hali chop etilmagan</h1>
         <Link to="/blog" className="inline-flex items-center gap-2 text-indigo-600 font-bold">
           <ArrowLeft className="w-5 h-5" /> Blogga qaytish
         </Link>
       </div>
     );
   }
+
+  const getYoutubeId = (url: string) => {
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+    const match = url.match(regExp);
+    return (match && match[2].length === 11) ? match[2] : null;
+  };
+
+  const videoId = post.videoUrl ? getYoutubeId(post.videoUrl) : null;
 
   return (
     <motion.div 
@@ -43,25 +51,38 @@ export const BlogDetail = () => {
           </h1>
         </div>
 
-        <div className="aspect-video rounded-[2.5rem] overflow-hidden shadow-2xl">
-          <img 
-            src={post.image} 
-            alt={post.title} 
-            className="w-full h-full object-cover"
-            referrerPolicy="no-referrer"
-          />
-        </div>
+        {videoId ? (
+          <div className="aspect-video rounded-[2.5rem] overflow-hidden shadow-2xl bg-black">
+            <iframe
+              width="100%"
+              height="100%"
+              src={`https://www.youtube.com/embed/${videoId}`}
+              title="YouTube video player"
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            ></iframe>
+          </div>
+        ) : (
+          <div className="aspect-video rounded-[2.5rem] overflow-hidden shadow-2xl">
+            <img 
+              src={post.image} 
+              alt={post.title} 
+              className="w-full h-full object-cover"
+              referrerPolicy="no-referrer"
+            />
+          </div>
+        )}
 
         <div className="grid lg:grid-cols-[1fr_auto] gap-12 items-start">
           <div className="prose prose-slate prose-lg max-w-none">
             <p className="text-xl text-slate-600 leading-relaxed font-medium mb-8">
               {post.excerpt}
             </p>
-            <div className="text-slate-700 leading-relaxed space-y-6">
-              {post.content.split('\n').map((paragraph, i) => (
-                <p key={i}>{paragraph}</p>
-              ))}
-            </div>
+            <div 
+              className="text-slate-700 leading-relaxed space-y-6 blog-content"
+              dangerouslySetInnerHTML={{ __html: post.content }}
+            />
           </div>
 
           <div className="lg:sticky lg:top-24 space-y-8">

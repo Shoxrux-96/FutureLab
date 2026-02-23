@@ -9,8 +9,11 @@ export const Blog = () => {
   const [currentPage, setCurrentPage] = React.useState(1);
   const postsPerPage = 12;
 
+  // Filter published posts
+  const publishedPosts = blogPosts.filter(p => p.status === 'published');
+
   // Sort by date (newest first)
-  const sortedPosts = [...blogPosts].sort((a, b) => 
+  const sortedPosts = [...publishedPosts].sort((a, b) => 
     new Date(b.date).getTime() - new Date(a.date).getTime()
   );
 

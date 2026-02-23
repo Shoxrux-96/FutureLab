@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from 'motion/react';
 const navItems = [
   { name: 'Bosh sahifa', path: '/' },
   { name: 'Blog', path: '/blog' },
+  { name: 'Vakansiyalar', path: '/vacancies' },
   { name: 'Ariza qoldirish', path: '/apply' },
 ];
 
@@ -23,7 +24,7 @@ export const Navbar = () => {
               <div className="bg-indigo-600 p-2 rounded-lg">
                 <GraduationCap className="w-6 h-6 text-white" />
               </div>
-              <span className="text-xl font-bold tracking-tight text-slate-900">FutureLab</span>
+              <span className="text-xl font-bold tracking-tight text-slate-900 hover:text-indigo-600 transition-colors">Kelajak Labaratoriyasi</span>
             </Link>
           </div>
 
